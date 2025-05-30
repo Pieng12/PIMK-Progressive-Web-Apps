@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="Description" content="A modern and aesthetic To-Do List WebApp.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png"/>
+    <title>Modern Todo List</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #4ecca3;
+            --secondary-color: #ff6b6b;
+            --bg-dark: #1a1a1a;
+            --bg-darker: #141414;
+            --bg-light: #2d2d2d;
+            --text-light: #ffffff;
+            --text-gray: #a0a0a0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            background: var(--bg-darker);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .theme-container {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 2px solid var(--text-light);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-btn.light {
+            background: #ffffff;
+        }
+
+        .theme-btn.dark {
+            background: #1a1a1a;
+        }
+
+        .theme-btn.colorful {
+            background: linear-gradient(45deg, #ff6b6b, #4ecca3);
+        }
+
+        .main-container {
+            width: 90%;
+            max-width: 600px;
+            margin: 30px auto;
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .todo-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .add-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 204, 163, 0.3);
+        }
+
+        .todo-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .todo-item {
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+        }
+
+        .todo-text {
+            flex: 1;
+            color: var(--text-light);
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+
+        .action-btn:hover {
+            color: var(--text-light);
+            transform: scale(1.1);
+        }
+
+        .delete-btn:hover {
+            color: var(--secondary-color);
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: var(--text-gray);
+        }
+
+        .date-time {
+            text-align: center;
+            color: var(--text-gray);
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .todo-input {
+                padding: 10px 15px;
+            }
+
+            .add-btn {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <header class="header">
+        <h1>My Todo List</h1>
+        <div class="theme-container">
+            <div class="theme-btn light" onclick="setTheme('light')"></div>
+            <div class="theme-btn dark" onclick="setTheme('dark')"></div>
+            <div class="theme-btn colorful" onclick="setTheme('colorful')"></div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="todo-input-container">
+            <input type="text" class="todo-input" placeholder="Add a new task...">
+            <button class="add-btn">
+                <i class="fas fa-plus"></i>
+                <span>Add</span>
+            </button>
+        </div>
+
+        <ul class="todo-list">
+            <!-- Todo items will be inserted here by JavaScript -->
+        </ul>
+
+        <div class="date-time" id="datetime"></div>
+    </main>
+
+    <script>
+        // Todo functionality
+        const todoInput = document.querySelector('.todo-input');
+        const addBtn = document.querySelector('.add-btn');
+        const todoList = document.querySelector('.todo-list');
+        let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+
+        function addTodo(text) {
+            if (text.trim() === '') return;
+
+            const todo = {
+                id: Date.now(),
+                text: text,
+                completed: false
+            };
+
+            todos.push(todo);
+            saveTodos();
+            renderTodos();
+            todoInput.value = '';
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(todo => todo.id !== id);
+            saveTodos();
+            renderTodos();
+        }
+
+        function toggleTodo(id) {
+            todos = todos.map(todo => {
+                if (todo.id === id) {
+                    return { ...todo, completed: !todo.completed };
+                }
+                return todo;
+            });
+            saveTodos();
+            renderTodos();
+        }
+
+        function saveTodos() {
+            localStorage.setItem('todos', JSON.stringify(todos));
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                    <span class="todo-text ${todo.completed ? 'completed' : ''}">${todo.text}</span>
+                    <div class="todo-actions">
+                        <button class="action-btn delete-btn">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+
+                const checkbox = li.querySelector('.todo-checkbox');
+                checkbox.addEventListener('change', () => toggleTodo(todo.id));
+
+                const deleteBtn = li.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+                todoList.appendChild(li);
+            });
+        }
+
+        addBtn.addEventListener('click', () => addTodo(todoInput.value));
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo(todoInput.value);
+            }
+        });
+
+        // Date and Time
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('datetime').textContent = now.toLocaleString();
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Theme Switcher
+        function setTheme(theme) {
+            const root = document.documentElement;
+            switch (theme) {
+                case 'light':
+                    root.style.setProperty('--bg-dark', '#f5f5f5');
+                    root.style.setProperty('--bg-darker', '#ffffff');
+                    root.style.setProperty('--bg-light', '#ffffff');
+                    root.style.setProperty('--text-light', '#333333');
+                    root.style.setProperty('--text-gray', '#666666');
+                    break;
+                case 'dark':
+                    root.style.setProperty('--bg-dark', '#1a1a1a');
+                    root.style.setProperty('--bg-darker', '#141414');
+                    root.style.setProperty('--bg-light', '#2d2d2d');
+                    root.style.setProperty('--text-light', '#ffffff');
+                    root.style.setProperty('--text-gray', '#a0a0a0');
+                    break;
+                case 'colorful':
+                    root.style.setProperty('--primary-color', '#ff6b6b');
+                    root.style.setProperty('--secondary-color', '#4ecca3');
+                    break;
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        // Load saved todos
+        renderTodos();
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('serviceWorker.js');
+            });
+        }
+    </script>
+</body>
+
+</html>
